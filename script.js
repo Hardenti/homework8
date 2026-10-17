@@ -18,7 +18,19 @@ if (menuButton && nav) {
         const isOpen = nav.classList.toggle("open");
         menuButton.setAttribute("aria-expanded", String(isOpen));
     });
+
+    nav.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+            nav.classList.remove("open");
+            menuButton.setAttribute("aria-expanded", "false");
+        });
+    });
 }
+
+const yearNodes = document.querySelectorAll("#year");
+yearNodes.forEach((node) => {
+    node.textContent = new Date().getFullYear();
+});
 
 function readRecords() {
     const raw = localStorage.getItem(storageKey);
@@ -102,7 +114,7 @@ function parseCsv(csvText) {
     const headers = parseCsvLine(lines[0]).map((header) => header.trim());
     const missingHeader = csvHeaders.some((header) => !headers.includes(header));
     if (missingHeader) {
-        throw new Error("CSV header is invalid. Use an exported ProjectOps Hub CSV file.");
+        throw new Error("CSV header is invalid. Use an exported portfolio CSV file.");
     }
 
     const columnIndex = Object.fromEntries(headers.map((header, index) => [header, index]));

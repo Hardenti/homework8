@@ -1,45 +1,47 @@
-# Tiyana Harden Resume
+# Tiyana Harden Portfolio
 
-This repository contains a personal resume webpage for Tiyana Harden, an Operations Manager focused on IT service delivery, continuous improvement, and operational performance.
+This repository contains a professional portfolio website for Tiyana Harden, showcasing web development, digital platform skills, IT operations experience, and selected technical project work.
 
-## Overview
+## Project description
 
-The site presents a polished, professional resume layout with sections for:
+This portfolio was created to present Tiyana Harden as a web development and digital platforms candidate with experience in enterprise technical support, service operations, reporting, process governance, and cross-functional communication. The site highlights a professional summary, technical skills, selected experience, and a project sample that demonstrates front-end development work.
 
-- Executive summary
-- Technology and methods
-- Core competencies
-- Selected operational impact
-- Professional experience
-- Education and recognition
+## How to update the site
 
-## Files
+1. Open the project in Visual Studio Code.
+2. Update the content in the HTML pages as needed.
+3. Edit the styling in styles.css to adjust colors, spacing, or layout.
+4. Add or replace project assets in the assets/images folder.
+5. Save changes and open the site in a browser to review.
 
-- resume.html — resume page content
-- styles.css — styling and responsive layout
-- script.js — shared site scripts
-- index.html — homepage
-- about.html — about page
-- projects.html — project page
-- contact.html — contact page
+## Technologies used
 
-## How to view locally
+- HTML5
+- CSS3
+- JavaScript
+- GitHub Pages
+- Visual Studio Code
+- Git and GitHub
 
-1. Open the project folder in VS Code.
-2. Open resume.html in a browser, or run a local preview server from the project root.
-3. For a simple local server, run:
+## Pages included
+
+- Home
+- About
+- Resume
+- Projects
+- Contact
+
+## Local preview
+
+From the project folder, run:
 
 ```bash
 python -m http.server 8000
 ```
 
-Then open http://localhost:8000/resume.html in your browser.
+Then open:
 
-## Notes
-
-This project is designed as a professional resume and portfolio website, with a clean, readable layout and mobile-friendly styling.
-
-## Repository purpose
-
-This project showcases Tiyana Harden's experience in operations management, KPI improvement, service desk leadership, workforce planning, and customer-focused service delivery.
+```text
+http://localhost:8000/index.html
+```
 

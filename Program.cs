@@ -1,164 +1,155 @@
-﻿namespace Assignemet_1_Tiyana_harden;
+﻿using System;
 
-// Program purpose:
-// Create a freelance project estimate based on labor, materials, project type,
-// optional discount, and tax.
-
-public enum ProjectType
+namespace AttendanceTracker
 {
-    Small,
-    Medium,
-    Large
-}
-
-public static class Program
-{
-    private const decimal LABOR_RATE = 75.00m;
-    private const decimal TAX_RATE = 0.07m;
-
-    public static void Main()
+    class Program
     {
-        Console.WriteLine("---------------------------------");
-        Console.WriteLine("Freelance Project Estimator");
-        Console.WriteLine("---------------------------------");
-
-        // Gather required user input.
-        string clientName = ReadRequiredText("Client Name: ");
-        decimal laborHours = ReadDecimal("Labor Hours: ", allowZero: false);
-        decimal materialCost = ReadDecimal("Material Cost: ", allowZero: true);
-        ProjectType projectType = ReadProjectType("Project Type (Small, Medium, Large): ");
-        decimal? discountPercent = ReadNullableDecimal("Do you have a discount percentage? (Press Enter if none): ");
-
-        // Calculate estimate amounts.
-        decimal laborCost = laborHours * LABOR_RATE;
-        decimal multiplier = GetComplexityMultiplier(projectType);
-        decimal baseSubtotal = (laborCost + materialCost) * multiplier;
-
-        // Apply optional discount before tax.
-        decimal appliedDiscountPercent = discountPercent ?? 0m;
-        decimal discountAmount = baseSubtotal * (appliedDiscountPercent / 100m);
-        decimal subtotal = baseSubtotal - discountAmount;
-
-        decimal tax = subtotal * TAX_RATE;
-        decimal totalCost = subtotal + tax;
-
-        decimal roundedTotal = Math.Round(totalCost, 2, MidpointRounding.AwayFromZero);
-        int estimatedDays = (int)Math.Ceiling(laborHours / 8m);
-        int projectNumber = new Random().Next(1000, 10000);
-
-        // Display formatted estimate report.
-        Console.WriteLine();
-        Console.WriteLine("---------------------------------");
-        Console.WriteLine("PROJECT ESTIMATE");
-        Console.WriteLine("---------------------------------");
-        Console.WriteLine($"Project Number: {projectNumber}");
-        Console.WriteLine($"Client: {clientName}");
-        Console.WriteLine($"Project Type: {projectType}");
-        Console.WriteLine();
-        Console.WriteLine($"Labor Cost:      {laborCost,10:C2}");
-        Console.WriteLine($"Material Cost:   {materialCost,10:C2}");
-
-        if (discountPercent.HasValue)
+        static void Main(string[] args)
         {
-            Console.WriteLine($"Discount ({discountPercent.Value}%): {-discountAmount,10:C2}");
-        }
-        else
-        {
-            Console.WriteLine("Discount:       No discount applied");
-        }
+            Console.WriteLine("Welcome to the Classroom Attendance Tracker!");
 
-        Console.WriteLine($"Subtotal:        {subtotal,10:C2}");
-        Console.WriteLine($"Tax:             {tax,10:C2}");
-        Console.WriteLine();
-        Console.WriteLine($"TOTAL:           {roundedTotal,10:C2}");
-        Console.WriteLine();
-        Console.WriteLine($"Estimated Days:  {estimatedDays}");
-        Console.WriteLine("---------------------------------");
-    }
-
-    private static string ReadRequiredText(string prompt)
-    {
-        while (true)
-        {
-            Console.Write(prompt);
-            string? value = Console.ReadLine();
-
-            if (!string.IsNullOrWhiteSpace(value))
+            int numStudents;
+            while (true)
             {
-                return value.Trim();
+                Console.Write("Enter the number of students: ");
+                string? input = Console.ReadLine();
+
+                if (int.TryParse(input, out numStudents) && numStudents > 0)
+                {
+                    break;
+                }
+
+                Console.WriteLine("Please enter a positive whole number.");
             }
 
-            Console.WriteLine("Value cannot be blank.");
-        }
-    }
+            string[] studentNames = new string[numStudents];
 
-    private static decimal ReadDecimal(string prompt, bool allowZero)
-    {
-        while (true)
-        {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
-
-            if (decimal.TryParse(input, out decimal result))
+            for (int i = 0; i < numStudents; i++)
             {
-                if (result > 0 || (allowZero && result == 0))
+                while (true)
                 {
-                    return result;
+                    Console.Write($"Enter name for student #{i + 1}: ");
+                    string? name = Console.ReadLine();
+
+                    if (!string.IsNullOrWhiteSpace(name))
+                    {
+                        studentNames[i] = name.Trim();
+                        break;
+                    }
+
+                    Console.WriteLine("Student name cannot be blank.");
                 }
             }
 
-            Console.WriteLine(allowZero
-                ? "Enter a valid number that is zero or greater."
-                : "Enter a valid number greater than zero.");
-        }
-    }
+            int[,] attendance = new int[numStudents, 5];
 
-    private static decimal? ReadNullableDecimal(string prompt)
-    {
-        while (true)
-        {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(input))
+            for (int i = 0; i < numStudents; i++)
             {
-                return null;
+                Console.WriteLine($"\nAttendance for {studentNames[i]} (Y/N):");
+
+                for (int day = 0; day < 5; day++)
+                {
+                    string? input;
+
+                    while (true)
+                    {
+                        Console.Write($"Day {day + 1}: ");
+                        input = Console.ReadLine();
+
+                        if (string.Equals(input?.Trim(), "Y", StringComparison.OrdinalIgnoreCase))
+                        {
+                            attendance[i, day] = 1;
+                            break;
+                        }
+
+                        if (string.Equals(input?.Trim(), "N", StringComparison.OrdinalIgnoreCase))
+                        {
+                            attendance[i, day] = 0;
+                            break;
+                        }
+
+                        Console.WriteLine("Invalid input. Please enter only Y or N.");
+                    }
+                }
             }
 
-            if (decimal.TryParse(input, out decimal discount) && discount >= 0m && discount <= 100m)
+            Console.WriteLine("\n--- Attendance Summary ---");
+
+            List<string> perfectStudents = new List<string>();
+            List<string> lowestStudents = new List<string>();
+            int lowestAttendance = 5;
+
+            for (int i = 0; i < numStudents; i++)
             {
-                return discount;
+                int totalDays = 0;
+
+                for (int day = 0; day < 5; day++)
+                {
+                    totalDays += attendance[i, day];
+                }
+
+                double average = totalDays / 5.0;
+
+                Console.WriteLine($"{studentNames[i]} attended {totalDays}/5 days (Average: {average * 100:F1}%)");
+                Console.Write("Attendance chart: ");
+
+                for (int day = 0; day < 5; day++)
+                {
+                    Console.Write(attendance[i, day] == 1 ? "*" : "-");
+                }
+
+                Console.WriteLine();
+
+                if (totalDays == 5)
+                {
+                    perfectStudents.Add(studentNames[i]);
+                    Console.WriteLine(" -> Perfect Attendance!");
+                }
+                else if (totalDays == 0)
+                {
+                    Console.WriteLine(" -> Needs Improvement!");
+                }
+
+                if (totalDays < lowestAttendance)
+                {
+                    lowestAttendance = totalDays;
+                    lowestStudents = new List<string> { studentNames[i] };
+                }
+                else if (totalDays == lowestAttendance)
+                {
+                    lowestStudents.Add(studentNames[i]);
+                }
             }
 
-            Console.WriteLine("Enter a valid discount between 0 and 100, or press Enter for none.");
-        }
-    }
-
-    private static ProjectType ReadProjectType(string prompt)
-    {
-        while (true)
-        {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
-
-            if (Enum.TryParse(input, true, out ProjectType type))
+            Console.WriteLine("\nStudents with perfect attendance:");
+            if (perfectStudents.Count == 0)
             {
-                return type;
+                Console.WriteLine("None");
+            }
+            else
+            {
+                foreach (string student in perfectStudents)
+                {
+                    Console.WriteLine($"- {student}");
+                }
             }
 
-            Console.WriteLine("Invalid project type. Enter Small, Medium, or Large.");
-        }
-    }
+            Console.WriteLine("\nStudents with the lowest attendance:");
+            if (lowestStudents.Count == 0)
+            {
+                Console.WriteLine("None");
+            }
+            else
+            {
+                foreach (string student in lowestStudents)
+                {
+                    Console.WriteLine($"- {student} ({lowestAttendance}/5 days)");
+                }
+            }
 
-    private static decimal GetComplexityMultiplier(ProjectType projectType)
-    {
-        return projectType switch
-        {
-            ProjectType.Small => 1.0m,
-            ProjectType.Medium => 1.15m,
-            ProjectType.Large => 1.30m,
-            _ => 1.0m
-        };
+            Console.WriteLine("\nPress any key to exit...");
+            Console.ReadKey();
+        }
     }
 }
 
